@@ -1,9 +1,12 @@
-package com.example.demo;
+package com.example.demo.controller;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.JobPostDto;
 import com.example.demo.model.JobPost;
 import com.example.demo.repo.JobRepo;
 import com.example.demo.service.JobService;
 
 @RestController
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:3000")
 
 public class Restcontroller {
@@ -30,27 +36,44 @@ public class Restcontroller {
 	
 	
 	//@GetMapping(path="jobPosts", produces= {"application/json"})   //This particular change in my annotation tell the server to send only json data to client.(known as negotiation). 
-	@GetMapping("jobPosts")
-	public List <JobPost> getAlljobs(){
-		return service.giveall();
+	
+	@GetMapping("/jobs")
+	public ResponseEntity<List<JobPostDto>> getAlljobs(){
+		return ResponseEntity.ok(service.giveall());
+		
 		
 	}
+	/*
+	Controller
+	   │
+	   ▼
+	ResponseEntity
+	   │
+	   ├── Status Code (200)
+	   ├── Headers
+	   └── Body (List<JobPost>)
+	   │
+	   ▼
+	Client receives JSON
+	*/
 	
-	@GetMapping("jobPost/{postid}")
-	public JobPost getjob(@PathVariable int postid) {
-		return service.getjob(postid);
+	@GetMapping("jobs/{postid}")
+	public ResponseEntity<JobPostDto> getjob(@PathVariable int postid) {
+		return ResponseEntity.ok(service.getjob(postid));
 		
 	}
 	//@pathvariable annotation look for the variable with curly brackets in path and put that value in the varibale declared in parameter.
 	
 	
 	//@PostMapping(path="jobPost",consumes= {"application/xml"})
-	@PostMapping("jobPost")
-	public JobPost adddata(@RequestBody JobPost job) {
+	@PostMapping("jobs")
+	public ResponseEntity<JobPostDto> adddata(@RequestBody JobPost job) {
 		service.add(job);
-		return service.getjob(job.getPostId());
+		return new ResponseEntity<>(service.getjob(job.getPostId()),HttpStatus.CREATED);
 		
 	}
+	
+	
 	
 	@GetMapping("pushdata")
 	public String pushdata() {
@@ -80,22 +103,25 @@ public class Restcontroller {
 		return "Saved sucessfully";
 		
 	}
-	@GetMapping("jobPosts/keyword/{keyword}")
-	public List<JobPost> searchbykeyword(@PathVariable("keyword") String keyword){
-		return service.searchbykeyword(keyword);
+	
+	
+	
+	
+	@GetMapping("jobs/keyword/{keyword}")
+	public ResponseEntity<List<JobPostDto>> searchbykeyword(@PathVariable String keyword){
+		return ResponseEntity.ok(service.searchbykeyword(keyword));
 	}
 	
-	@PutMapping("jobPost")
-	public JobPost updatejob(@RequestBody JobPost job) {
+	@PutMapping("jobs")
+	public ResponseEntity<JobPostDto> updatejob(@RequestBody JobPost job) {
 		service.updatejob(job);
-		return service.getjob(job.getPostId());
+		return new ResponseEntity<>(service.getjob(job.getPostId()),HttpStatus.OK);
 	}
 	
-	@DeleteMapping("jobPost/{postid}")
-	public String deletejob(@PathVariable int postid) {
+	@DeleteMapping("jobs/{postid}")
+	public ResponseEntity<String> deletejob(@PathVariable int postid) {
 		service.deleteJob(postid);
-		return "Deleted";
-		
+		return new ResponseEntity<>("Deleted successfully",HttpStatus.OK);
 	}
 	
 	

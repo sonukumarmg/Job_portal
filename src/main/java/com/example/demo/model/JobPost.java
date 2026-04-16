@@ -1,11 +1,17 @@
 package com.example.demo.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.example.demo.dto.JobPostDto;
+
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 /*
@@ -17,15 +23,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 */
 
-@Component
+
 @Entity
-public class JobPost {
+public class JobPost implements Serializable {
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int postId;
 	private String postProfile;
 	private String postDesc;
 	private int reqExperience;
-	@ElementCollection
+	@ElementCollection(fetch= FetchType.EAGER)
 	private List<String> postTechStack;
 	
 	public JobPost() { }
@@ -37,7 +44,7 @@ public class JobPost {
         this.reqExperience   = reqExperience;
         this.postTechStack   = postTechStack;
     }
-
+    
     // ——— GETTERS ———
 
     public int getPostId() {
