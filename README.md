@@ -82,8 +82,6 @@ Current key settings:
 - PostgreSQL URL, username, password
 - Redis host and port
 
-> ⚠️ Important: JWT secret is currently hardcoded in `JwtService.java`.  
-> For production, move it to environment variables or secure config.
 
 ---
 
@@ -186,4 +184,4 @@ Content-Type: application/json
 ## License
 
 This repository currently has no license file.  
-Add a `LICENSE` file (e.g., MIT or Apache 2.0) if you plan to share it publicly.
+
